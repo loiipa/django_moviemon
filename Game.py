@@ -1,5 +1,7 @@
 import sys
 import random
+from django.utils.functional import Promise
+import requests
 from django.conf import settings
 
 class GameObject:
@@ -63,7 +65,6 @@ class World:
         self.grid_x = size_x
         self.grid_y = size_y
         #moviemon생성, 배치
-
         
 
 class Game:
@@ -74,28 +75,37 @@ class Game:
         self.ball = ball_count
         # MOVIES리스트로 Dic 만들기
 
-    #Player control
-
-    def move_player_Down(self):
+    def __imDB(self, id = 0):
+        params = { 'i':id, 'r':'json', 'apikey':"c94fad6" }
+        URL = 'http://www.omdbapi.com/'
+    #////////////////
+    #/Player control/
+    #////////////////
+    def __move_player_Down(self):
         if self.player.y_position() >= self.world.grid_y - 1:
             return None
-        return self.player.move(0, 1)
-
-    def move_player_Up(self):
+        return self.player.move(0, -1)
+    def __move_player_Up(self):
         if self.player.y_position() <= 0:
             return None
-        return self.player.move(0, -1)
-
-    def move_player_Right(self):
+        return self.player.move(0, 1)
+    def __move_player_Right(self):
         if self.player.x_position() >= self.world.grid_x - 1:
             return None
         return self.player.move(1, 0)
-
-    def move_player_Left(self):
+    def __move_player_Left(self):
         if self.player.x_position() <= 0:
             return None
         return self.player.move(-1, 0)
-
+    _player_move = {
+        'Up'    :   __move_player_Down,
+        'Down'  :   __move_player_Up,
+        'Left'  :   __move_player_Left,
+        'Right' :   __move_player_Right
+    }
+    def move_player(self, order):
+        return (self._player_move[order](self))
+        
     def player_Attack(self, moviemon):
         if self.ball <= 0:
             return None
