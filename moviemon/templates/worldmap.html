@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+Worldmap
+{% endblock %}
+
+{% block content %}
+<h2>worldmap</h2>
+<table>
+  {% for i in "x"|rjust:"10" %}
+  <tr>
+    {% for i in "y"|rjust:"10" %}
+    <td>
+    o
+    </td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+<p>A - Battle</p>
+<p>Start - Option</p>
+<p>Select - Moviedex</p>
+{% endblock %}
