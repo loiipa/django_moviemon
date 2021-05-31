@@ -7,11 +7,15 @@ Worldmap
 {% block content %}
 <h2>worldmap</h2>
 <table>
-  {% for i in "x"|rjust:"10" %}
+  {% for y in map_size_y %}
   <tr>
-    {% for i in "y"|rjust:"10" %}
+    {% for x in map_size_x %}
     <td>
-    o
+    {% if my_location_x == x and my_location_y == y %}
+    my
+    {% else %}
+    (x{{x}},y{{y}})
+    {% endif %}
     </td>
     {% endfor %}
   </tr>
