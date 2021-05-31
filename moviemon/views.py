@@ -1,9 +1,11 @@
 from django.shortcuts import render
 import Game
+import random
 
 # Create your views here.
 
-pos = [0,0]
+g_pos = [0,0]
+g_ball = 0
 
 def titlescreen(request):
 	return render(request, "titlescreen.html",
@@ -14,17 +16,22 @@ def titlescreen(request):
 def worldmap(request):
 	key = request.GET.get('key', None)
 	my_info = Game.Game()
-	my_info.player.pos_x = pos[0]
-	my_info.player.pos_y = pos[1]
+	my_info.player.pos_x = g_pos[0]
+	my_info.player.pos_y = g_pos[1]
+	g_ball = my_info.ball
+
 	if key == 'new_game':
 		pass
 	elif key == 'Up' or key == 'Down' or key == 'Left' or key == 'Right':
 		pos[0], pos[1] = my_info.move_player(key)
 
+	ball_event = random
+
+
 	return render(request, "worldmap.html",
 	{'commands':{'btn_a':'../battle/', 'btn_b':'#', 'btn_start':'../options/', 'btn_select':'../moviedex/',
 		'btn_up':'./?key=Up', 'btn_down':'./?key=Down', 'btn_left':'./?key=Left', 'btn_right':'./?key=Right'
-		}, 'my_location_x':pos[0], 'my_location_y':pos[1], 'map_size_x':range(0, my_info.world.grid_x), 'map_size_y':range(0, my_info.world.grid_y)
+		}, 'my_location_x':g_pos[0], 'my_location_y':g_pos[1], 'map_size_x':range(0, my_info.world.grid_x), 'map_size_y':range(0, my_info.world.grid_y)
 		})
 
 def battle(request):
