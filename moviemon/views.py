@@ -14,20 +14,16 @@ def titlescreen(request):
 def worldmap(request):
 	key = request.GET.get('key', None)
 	my_info = Game.Game()
+	my_info.player.pos_x = pos[0]
+	my_info.player.pos_y = pos[1]
 	if key == 'new_game':
 		pass
-	elif key == 'up':
-		pos[0] += 1
-	elif key == 'down':
-		pos[0]-= 1
-	elif key == 'left':
-		pos[1] -= 1
-	elif key == 'right':
-		pos[1] += 1
+	elif key == 'Up' or key == 'Down' or key == 'Left' or key == 'Right':
+		pos[0], pos[1] = my_info.move_player(key)
 
 	return render(request, "worldmap.html",
 	{'commands':{'btn_a':'../battle/', 'btn_b':'#', 'btn_start':'../options/', 'btn_select':'../moviedex/',
-		'btn_up':'./?key=up', 'btn_down':'./?key=down', 'btn_left':'./?key=left', 'btn_right':'./?key=right'
+		'btn_up':'./?key=Up', 'btn_down':'./?key=Down', 'btn_left':'./?key=Left', 'btn_right':'./?key=Right'
 		}, 'my_location_x':pos[0], 'my_location_y':pos[1], 'map_size_x':range(0, my_info.world.grid_x), 'map_size_y':range(0, my_info.world.grid_y)
 		})
 
