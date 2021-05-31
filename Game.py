@@ -8,22 +8,22 @@ class GameObject:
     def __init__(self, x = 0, y = 0):
         self.pos_x = x
         self.pos_y = y
-    
+
     def x_position(self):
         return self.pos_x
-    
+
     def y_position(self):
         return self.pos_y
-    
+
     def position(self):
         return self.pos_x, self.pos_y
-    
+
     def set_power(self, power = 0):
         self.power = power
-    
+
     def add_power(self, inc = 1):
         self.power += inc
-    
+
     def strength(self):
         return self.power
 
@@ -32,7 +32,7 @@ class Player(GameObject):
     def __init__(self, x = 0, y = 0):
         super().__init__(x, y)
         self.set_power()
-    
+
     def move(self, x_inc, y_inc):
         self.pos_x += x_inc
         self.pos_y += y_inc
@@ -48,14 +48,14 @@ class Player(GameObject):
         if r_num < atk:
             return True
         return False
-        
+
 class Movimon(GameObject):
     #영화 정보
     def __init__(self, x = 0, y = 0, id = "", power = 0):
         super().__init__(x, y)
         self.id = id
         self.set_power(power)
-        
+
     # def movie_id(self):
     #     return self._info['id']
 
@@ -66,7 +66,6 @@ class World:
         self.grid_y = size_y
         #moviemon생성, 배치
         
-
 class Game:
 
     def __init__(self, ball_count = 10):
