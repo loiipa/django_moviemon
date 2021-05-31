@@ -119,6 +119,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Moviemon Setting
+
+MOVIES = ('tt0468492', 'tt5034838', 'tt0078748', 'tt0087363', 'tt0073195', 'tt8235660', 'tt0118615', 'tt0105643', 'tt1844770', 'tt0329101', 'tt0372873')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
