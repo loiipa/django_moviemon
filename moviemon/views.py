@@ -1,9 +1,7 @@
 from django.shortcuts import render
-import Game
+from Game import Game
 
 # Create your views here.
-
-pos = [0,0]
 
 def titlescreen(request):
 	return render(request, "titlescreen.html",
@@ -13,18 +11,24 @@ def titlescreen(request):
 
 def worldmap(request):
 	key = request.GET.get('key', None)
-	my_info = Game.Game()
-	my_info.player.pos_x = pos[0]
-	my_info.player.pos_y = pos[1]
+
+	# my_info.player.pos_x = pos[0]
+	# my_info.player.pos_y = pos[1]
+	my_info = Game()
 	if key == 'new_game':
-		pass
-	elif key == 'Up' or key == 'Down' or key == 'Left' or key == 'Right':
-		pos[0], pos[1] = my_info.move_player(key)
+		my_info.movie.load_default_settings()
+	else:
+		my_info.load_data(my_info.load_cache())
+		if key == 'Up' or key == 'Down' or key == 'Left' or key == 'Right':
+			my_info.move_player(key)
+
+	my_info.dump_cache(my_info.dump_data())
+	print(my_info.dump_data())
 
 	return render(request, "worldmap.html",
 	{'commands':{'btn_a':'../battle/', 'btn_b':'#', 'btn_start':'../options/', 'btn_select':'../moviedex/',
 		'btn_up':'./?key=Up', 'btn_down':'./?key=Down', 'btn_left':'./?key=Left', 'btn_right':'./?key=Right'
-		}, 'my_location_x':pos[0], 'my_location_y':pos[1], 'map_size_x':range(0, my_info.world.grid_x), 'map_size_y':range(0, my_info.world.grid_y)
+		}, 'my_location_x':my_info.player.x_position(), 'my_location_y':my_info.player.y_position(), 'map_size_x':range(0, my_info.world.grid_x), 'map_size_y':range(0, my_info.world.grid_y)
 		})
 
 def battle(request):
