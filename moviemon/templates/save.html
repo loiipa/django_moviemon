@@ -5,6 +5,22 @@ Save
 
 {% block content %}
 <h2>Save</h2>
+
+<p>
+{% if indicator == 'a' %}
+->
+{% endif %}
+Slot A</p>
+<p>
+{% if indicator == 'b' %}
+->
+{% endif %}
+Slot B</p>
+<p>
+{% if indicator == 'c' %}
+->
+{% endif %}
+Slot C</p>
 <p>A - Save</p>
 <p>B - Cancel</p>
 {% endblock %}

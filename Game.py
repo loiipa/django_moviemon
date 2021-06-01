@@ -40,9 +40,9 @@ class Player(GameObject):
         self.set_power(cache['strength'])
 
     def move(self, x_inc, y_inc):
-        self.pos_x += x_inc
-        self.pos_y += y_inc
-        return self.position()
+        dest_pos_x = self.pos_x + x_inc
+        dest_pos_y = self.pos_y + y_inc
+        return dest_pos_x, dest_pos_y
 
     def attack(self, monster_power):
         atk = 50 - (monster_power * 10) + (self.strength * 5)
@@ -145,19 +145,19 @@ class Game:
     
     def __move_player_Up(self):
         if self.player.y_position() >= self.world.grid_y - 1:
-            return self.player.position()
+            return None
         return self.player.move(0, 1)
     def __move_player_Down(self):
         if self.player.y_position() <= 0:
-            return self.player.position()
+            return None
         return self.player.move(0, -1)
     def __move_player_Right(self):
         if self.player.x_position() >= self.world.grid_x - 1:
-            return self.player.position()
+            return None
         return self.player.move(1, 0)
     def __move_player_Left(self):
         if self.player.x_position() <= 0:
-            return self.player.position()
+            return None
         return self.player.move(-1, 0)
     _player_move = {
         'Up'    :   __move_player_Down,
@@ -169,11 +169,17 @@ class Game:
     def move_player(self, order):
         return (self._player_move[order](self))
 
-    def player_Attack(self, moviemon):
+    def get_strength(self):
+        return self.player.strength()
+        
+
+    def player_Attack(self, m_id = None):
         if self.movie_balls <= 0:
             return None
         self.movie_balls -= 1
-        if self.player.attack(moviemon) == True:
+        if self.player.attack(self.movie.moviedex[m_id]['imdbRating']) == True:
+            self.movie.captured.append(m_id)
+            self.player.add_power()
             #잡았을 때 분기
             return True
         else:

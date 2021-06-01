@@ -6,12 +6,23 @@ Worldmap
 
 {% block content %}
 <h2>worldmap</h2>
+<p>movieball : {{ball_count}}
+{% if ball_got == True %}
+----------I got a MovieBall
+{% elif movie_got == True %}
+----------I got a MovieMonster
+{% endif %}
+</p>
 <table>
   {% for y in map_size_y %}
   <tr>
     {% for x in map_size_x %}
     <td>
-    {% if my_location_x == x and my_location_y == y %}
+    {% if my_location_x == x and my_location_y == y and ball_got == True %}
+    my ball
+    {% elif my_location_x == x and my_location_y == y and movie_got == True %}
+    my MV
+    {% elif my_location_x == x and my_location_y == y %}
     my
     {% else %}
     (x{{my_location_x}},y{{my_location_y}})

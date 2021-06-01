@@ -21,7 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.titlescreen, name="titlescreen"),
     path('worldmap/', views.worldmap, name='worldmap'),
-    path('battle/', views.battle, name='battle'),
+    path('battle/<str:moviemon_id>', views.battle, name='battle'),
     path('moviedex/', views.moviedex, name='moviedex'),
     path('moviedex/detail/', views.detail, name='detail'),
     path('options/', views.option, name='option'),
