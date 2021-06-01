@@ -35,14 +35,13 @@ def worldmap(request):
 			x = my_info.player.x_position()
 			y = my_info.player.y_position()
 		if x != my_info.player.x_position() or y != my_info.player.y_position():
-			event = random.randint(0, 5)
+			event = random.randint(0, 2)
 			if event == 0:
 				my_info.movie_balls += 1
 				ball_got = True
-			elif event == 1:
-				""" Moviemon 임의로 표기 """
-				moviemon_id = 'tt0468492'
-				btn_a = '../battle/' + moviemon_id
+			elif event == 1 and len(my_info.movie.moviedex) > len(my_info.movie.captured):
+				moviemon_id = my_info.movie.get_random_movie()
+				btn_a = '../battle/' + moviemon_id[0]
 				movie_got = True
 		my_info.player.pos_x = x
 		my_info.player.pos_y = y
@@ -59,16 +58,65 @@ def worldmap(request):
 		})
 
 def battle(request, moviemon_id):
+	my_info = Game.Game()
+	my_info.load_data(my_info.load_cache())
+	result = request.GET.get('result', 'first')
+	btn_a = '#'
+	movie_info = my_info.movie.get_movie(moviemon_id)
+	if result == 'first':
+		mention_A = 'Press A! You Can catch that!'
+		mention_C = ''
+		result = None
+		btn_a = './' + moviemon_id + '?result=' + str(result)
+	else:
+		result = my_info.player_Attack(moviemon_id)
+		if result == None:
+			mention_A = 'Go Away!'
+			mention_C = 'Your Ball is empty.'
+		elif result == True:
+			mention_A = ''
+			mention_C = 'Gotcha!'
+		elif result == False:
+			mention_A = 'A - Launch Movieball'
+			mention_C = 'Unfortunately missed!'
+			btn_a = './' + moviemon_id + '?result=' + str(result)
+
+	my_info.dump_cache(my_info.dump_data())
 	return render(request, "battle.html",
-	{'commands':{'btn_a':'../battle', 'btn_b':'../worldmap', 'btn_start':'#', 'btn_select':'#',
+	{'commands':{'btn_a':btn_a, 'btn_b':'../worldmap', 'btn_start':'#', 'btn_select':'#',
 		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
-		}})
+		},'mention_A':mention_A, 'mention_C':mention_C, 'balls' : my_info.movie_balls,
+		'player_strength':my_info.get_strength(), 'movie_strength':int(float(movie_info['imdbRating']) * 10),
+		'rate':my_info.player.percentage(float(movie_info['imdbRating'])),
+		'image':movie_info['Poster'], 'title':movie_info['Title'], 'imdbRating':movie_info['imdbRating'],
+		})
 
 def moviedex(request):
+	my_info = Game.Game()
+	my_info.load_data(my_info.load_cache())
+	key = int(request.GET.get('key', 0))
+
+	movie_count = len(my_info.movie.captured)
+	show_list = [key-1, key, key+1]
+	post_list = []
+	title_list = []
+	for i in show_list:
+		if i < 0:
+			i += movie_count
+		elif i >= movie_count:
+			i -= movie_count
+	for i in show_list:
+		id = my_info.movie.captured[i]
+		post_list.append(my_info.movie.moviedex[id]['Poster'])
+		title_list.append(my_info.movie.moviedex[id]['Title'])
+
+	my_info.dump_cache(my_info.dump_data())
+
 	return render(request, "moviedex.html",
 	{'commands':{'btn_a':'detail/', 'btn_b':'../worldmap', 'btn_start':'#', 'btn_select':'../worldmap/',
 		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
-		}})
+		},'post_list':post_list, 'title_list':title_list
+		})
 
 def detail(request):
 	return render(request, "detail.html",

@@ -44,13 +44,17 @@ class Player(GameObject):
         dest_pos_y = self.pos_y + y_inc
         return dest_pos_x, dest_pos_y
 
-    def attack(self, monster_power):
-        atk = 50 - (monster_power * 10) + (self.strength * 5)
+    def percentage(self, monster_power):
+        atk = 50 - int(monster_power * 10) + (self.strength() * 5)
         if atk < 1:
             atk = 1
         if atk > 90:
             atk = 90
-        r_num = random.range(0, 100)
+        return atk
+
+    def attack(self, monster_power):
+        atk = self.percentage(monster_power)
+        r_num = random.randrange(0, 100)
         if r_num < atk:
             return True
         return False
@@ -123,7 +127,7 @@ class Game:
     #////////////////
     #//data control//
     #////////////////
-    
+
     def dump_data(self):
         return {
             'player_pos' : self.player.position(),
@@ -142,7 +146,7 @@ class Game:
     #////////////////
     #/Player control/
     #////////////////
-    
+
     def __move_player_Up(self):
         if self.player.y_position() >= self.world.grid_y - 1:
             return None
@@ -165,19 +169,19 @@ class Game:
         'Left'  :   __move_player_Left,
         'Right' :   __move_player_Right
     }
-    
+
     def move_player(self, order):
         return (self._player_move[order](self))
 
     def get_strength(self):
         return self.player.strength()
-        
+
 
     def player_Attack(self, m_id = None):
         if self.movie_balls <= 0:
             return None
         self.movie_balls -= 1
-        if self.player.attack(self.movie.moviedex[m_id]['imdbRating']) == True:
+        if self.player.attack(float(self.movie.moviedex[m_id]['imdbRating'])) == True:
             self.movie.captured.append(m_id)
             self.player.add_power()
             #잡았을 때 분기
@@ -185,15 +189,15 @@ class Game:
         else:
             #놓쳤을 때 분기
             return False
-    
+
     #////////////////
     #//pickle_cache//
     #////////////////
-    
+
     def dump_cache(self, _cache):
         with open('cache.pkl', 'wb') as cache:
             pickle.dump(_cache, cache)
-    
+
     def load_cache(self):
         self.cache = {}
         with open('cache.pkl', 'rb') as cache:
