@@ -92,13 +92,13 @@ class Movie:
             dup = self.captured
             id = random.choice(settings.MOVIES)
             dup.append(id)
-            if len(dup) != len(set(dup)):
+            if len(dup) == len(set(dup)):
                 result = False
             dup.remove(id)
         return id, self.moviedex[id]
 
     @staticmethod
-    def get_movie(self, id = ''):
+    def get_movie(id = ''):
         params = { 'i':id, 'r':'json', 'apikey':"c94fad6" }
         URL = 'http://www.omdbapi.com/'
         response = requests.get(URL, params = params)

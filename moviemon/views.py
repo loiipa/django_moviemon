@@ -35,19 +35,18 @@ def worldmap(request):
 			x = my_info.player.x_position()
 			y = my_info.player.y_position()
 		if x != my_info.player.x_position() or y != my_info.player.y_position():
-			event = random.randint(0, 5)
+			event = random.randint(0, 2)
 			if event == 0:
 				my_info.movie_balls += 1
 				ball_got = True
-			elif event == 1:
-				""" Moviemon 임의로 표기 """
-				moviemon_id = 'tt0468492'
-				btn_a = '../battle/' + moviemon_id
+			elif event == 1 and len(my_info.movie.moviedex) > len(my_info.movie.captured):
+				moviemon_id = my_info.movie.get_random_movie()
+				btn_a = '../battle/' + moviemon_id[0]
 				movie_got = True
 		my_info.player.pos_x = x
 		my_info.player.pos_y = y
 	my_info.dump_cache(my_info.dump_data())
-	# print(my_info.dump_data())
+	print(my_info.dump_data())
 
 	return render(request, "worldmap.html",
 	{'commands':{'btn_a':btn_a, 'btn_b':'#', 'btn_start':'../options/', 'btn_select':'../moviedex/',
@@ -60,10 +59,37 @@ def worldmap(request):
 		})
 
 def battle(request, moviemon_id):
+	my_info = Game.Game()
+	my_info.load_data(my_info.load_cache())
+	result = request.GET.get('result', 'first')
+	btn_a = '#'
+	movie_info = my_info.movie.get_movie(moviemon_id)
+	if result == 'first':
+		mention_A = 'Press A! You Can catch that!'
+		mention_C = ''
+		result = None
+		btn_a = './' + moviemon_id + '?result=' + str(result)
+	else:
+		result = my_info.player_Attack(moviemon_id)
+		if result == None:
+			mention_A = 'Go Away!'
+			mention_C = 'Your Ball is empty.'
+		elif result == True:
+			mention_A = ''
+			mention_C = 'Gotcha!'
+		elif result == False:
+			mention_A = 'A - Launch Movieball'
+			mention_C = 'Unfortunately missed!'
+			btn_a = './' + moviemon_id + '?result=' + str(result)
+
+	my_info.dump_cache(my_info.dump_data())
 	return render(request, "battle.html",
-	{'commands':{'btn_a':'../battle', 'btn_b':'../worldmap', 'btn_start':'#', 'btn_select':'#',
+	{'commands':{'btn_a':btn_a, 'btn_b':'../worldmap', 'btn_start':'#', 'btn_select':'#',
 		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
-		}})
+		},'mention_A':mention_A, 'mention_C':mention_C, 'balls' : my_info.movie_balls,
+		'image':movie_info['Poster'], 'title':movie_info['Title'], 'imdbRating':movie_info['imdbRating']
+
+		})
 
 def moviedex(request):
 	return render(request, "moviedex.html",
