@@ -92,7 +92,7 @@ class Movie:
             dup = self.captured
             id = random.choice(settings.MOVIES)
             dup.append(id)
-            if len(dup) != len(set(dup)):
+            if len(dup) == len(set(dup)):
                 result = False
             dup.remove(id)
         return id, self.moviedex[id]
