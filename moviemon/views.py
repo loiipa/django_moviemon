@@ -46,7 +46,6 @@ def worldmap(request):
 		my_info.player.pos_x = x
 		my_info.player.pos_y = y
 	my_info.dump_cache(my_info.dump_data())
-	print(my_info.dump_data())
 
 	return render(request, "worldmap.html",
 	{'commands':{'btn_a':btn_a, 'btn_b':'#', 'btn_start':'../options/', 'btn_select':'../moviedex/',

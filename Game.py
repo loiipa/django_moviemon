@@ -194,10 +194,10 @@ class Game:
             self.cache = pickle.load(cache)
         return self.cache
 
-def main():
-    game = Game()
-    game.movie.load_default_settings()
-    print(game.movie.moviedex.items())
+# def main():
+#     game = Game()
+#     game.movie.load_default_settings()
+#     print(game.movie.moviedex.items())
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
