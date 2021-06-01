@@ -13,19 +13,20 @@ Worldmap
 ----------I got a MovieMonster
 {% endif %}
 </p>
-<table>
+<table style="border: 2px solid #fff; background-color: #d0eed0; table-layout:
+fixed; margin-left:auto; margin-right:auto; ">
   {% for y in map_size_y %}
   <tr>
     {% for x in map_size_x %}
-    <td>
+    <td style="height: 50px; width: 50px; border: 2px solid #fff; text-align: center;">
     {% if my_location_x == x and my_location_y == y and ball_got == True %}
-    my ball
+    my
+    (ball)
     {% elif my_location_x == x and my_location_y == y and movie_got == True %}
-    my MV
+    my
+    (MV)
     {% elif my_location_x == x and my_location_y == y %}
     my
-    {% else %}
-    (x{{my_location_x}},y{{my_location_y}})
     {% endif %}
     </td>
     {% endfor %}

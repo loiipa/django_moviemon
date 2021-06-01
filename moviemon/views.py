@@ -86,15 +86,37 @@ def battle(request, moviemon_id):
 	{'commands':{'btn_a':btn_a, 'btn_b':'../worldmap', 'btn_start':'#', 'btn_select':'#',
 		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
 		},'mention_A':mention_A, 'mention_C':mention_C, 'balls' : my_info.movie_balls,
-		'image':movie_info['Poster'], 'title':movie_info['Title'], 'imdbRating':movie_info['imdbRating']
-
+		'player_strength':my_info.get_strength(), 'movie_strength':int(float(movie_info['imdbRating']) * 10),
+		'rate':my_info.player.percentage(float(movie_info['imdbRating'])),
+		'image':movie_info['Poster'], 'title':movie_info['Title'], 'imdbRating':movie_info['imdbRating'],
 		})
 
 def moviedex(request):
+	my_info = Game.Game()
+	my_info.load_data(my_info.load_cache())
+	key = int(request.GET.get('key', 0))
+
+	movie_count = len(my_info.movie.captured)
+	show_list = [key-1, key, key+1]
+	post_list = []
+	title_list = []
+	for i in show_list:
+		if i < 0:
+			i += movie_count
+		elif i >= movie_count:
+			i -= movie_count
+	for i in show_list:
+		id = my_info.movie.captured[i]
+		post_list.append(my_info.movie.moviedex[id]['Poster'])
+		title_list.append(my_info.movie.moviedex[id]['Title'])
+
+	my_info.dump_cache(my_info.dump_data())
+
 	return render(request, "moviedex.html",
 	{'commands':{'btn_a':'detail/', 'btn_b':'../worldmap', 'btn_start':'#', 'btn_select':'../worldmap/',
 		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
-		}})
+		},'post_list':post_list, 'title_list':title_list
+		})
 
 def detail(request):
 	return render(request, "detail.html",
