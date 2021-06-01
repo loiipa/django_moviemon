@@ -5,13 +5,44 @@ Moviedex
 {% endblock %}
 
 {% block content %}
+
+{% if movie_count == 0 %}
+<h3>
+Not in Moviemon in your Pocket... Cheer up!
+</h3>
+<p>
+<img style="width:200px; " src="{{post_list.0}}" />
+{% endif %}
+
+{% if movie_count == 1 %}
+<h3>
+{{title_list.0}}
+</h3>
+<p>
+<img style="width:200px; " src="{{post_list.0}}" />
+{% endif %}
+
+
+{% if movie_count == 2 %}
 <h3>
 {% for i in title_list %}{{i}}
 {% endfor %}
 </h3>
 <p>
-{% for i in post_list %}<img src="{{i}}" />
+<img style="width:200px; " src="{{post_list.0}}" />
+<img style="opacity: 0.5; width:150px; "src="{{post_list.1}}" />
+{% endif %}
+
+{% if movie_count >= 3 %}
+<h3>
+{% for i in title_list %}{{i}}
 {% endfor %}
+</h3>
+<p>
+<img style="opacity: 0.5; width:150px; "src="{{post_list.0}}" />
+<img style="width:200px; " src="{{post_list.1}}" />
+<img style="opacity: 0.5; width:150px; "src="{{post_list.2}}" />
+{% endif %}
 </p>
 <h2>Moviedex</h2>
 <p>A - More Information</p>

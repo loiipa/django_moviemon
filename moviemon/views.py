@@ -96,34 +96,52 @@ def moviedex(request):
 	my_info = Game.Game()
 	my_info.load_data(my_info.load_cache())
 	key = int(request.GET.get('key', 0))
-
-	movie_count = len(my_info.movie.captured)
-	show_list = [key-1, key, key+1]
 	post_list = []
 	title_list = []
-	for i in show_list:
-		if i < 0:
-			i += movie_count
-		elif i >= movie_count:
-			i -= movie_count
+	show_list = []
+
+	movie_count = len(my_info.movie.captured)
+	if movie_count == 1:
+		show_list = [0]
+		key = 0
+	elif movie_count == 2:
+		key %= 2
+		if key == 0:
+			show_list = [0, 1]
+		else:
+			show_list = [1, 0]
+	elif movie_count >= 3:
+		for i in range(key-1, key+2):
+			if i < 0:
+				i += movie_count
+			elif i >= movie_count:
+				i -= movie_count
+			show_list.append(i)
+		if key < 0:
+			key += movie_count
+		elif key >= movie_count:
+			key -= movie_count
 	for i in show_list:
 		id = my_info.movie.captured[i]
 		post_list.append(my_info.movie.moviedex[id]['Poster'])
 		title_list.append(my_info.movie.moviedex[id]['Title'])
-
-	my_info.dump_cache(my_info.dump_data())
+	moviemon_id = my_info.movie.captured[key]
 
 	return render(request, "moviedex.html",
-	{'commands':{'btn_a':'detail/', 'btn_b':'../worldmap', 'btn_start':'#', 'btn_select':'../worldmap/',
-		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
-		},'post_list':post_list, 'title_list':title_list
+	{'commands':{'btn_a':'detail/' + moviemon_id + '?key=' + str(key), 'btn_b':'#', 'btn_start':'#', 'btn_select':'../worldmap/',
+		'btn_up':'#', 'btn_down':'#', 'btn_left':'./?key=' + str(key - 1), 'btn_right':'./?key=' + str(key + 1)
+		},'post_list':post_list, 'title_list':title_list, 'movie_count':movie_count
 		})
 
-def detail(request):
+def detail(request, moviemon_id):
+	key = int(request.GET.get('key', 0))
+	my_info = Game.Game()
+	movie_info = my_info.movie.get_movie(moviemon_id)
+
 	return render(request, "detail.html",
-	{'commands':{'btn_a':'#', 'btn_b':'../', 'btn_start':'#', 'btn_select':'#',
-		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
-		}})
+	{'commands':{'btn_a':'#', 'btn_b':'../?key='+ str(key), 'btn_start':'#', 'btn_select':'#', 'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
+		},'image':movie_info['Poster'], 'title':movie_info['Title'], 'year':movie_info['Year'], 'genre':movie_info['Genre'],'imdbRating':float(movie_info['imdbRating']),'plot':movie_info['Plot']
+		})
 
 def option(request):
 	return render(request, "option.html",
