@@ -1,5 +1,5 @@
 import os
-from django.conf import settings
+#from django.conf import settings
 import pickle
 import glob
 
@@ -44,6 +44,17 @@ class GameData:
         except Exception as e:
             print(e)
             return False
-    
-#     # @staticmethod
-#     # def get_file_list(args):
+   
+    @staticmethod
+    def get_save_list():
+        sav_lst = ['Free', 'Free', 'Free']
+        a_file = glob.glob('saved_game/slotA_*_*.mmg')
+        if len(a_file) == 1:
+            sav_lst[0] = a_file[0]
+        b_file = glob.glob('saved_game/slotB_*_*.mmg')
+        if len(b_file) == 1:
+            sav_lst[0] = b_file[0]
+        c_file = glob.glob('saved_game/slotC_*_*.mmg')
+        if len(c_file) == 1:
+            sav_lst[0] = c_file[0]
+        return sav_lst
