@@ -5,20 +5,15 @@ import glob
 
 class GameData:
 
-<<<<<<< HEAD
-    def __init__(self):
-        #slot<n>_<movieball>_<score>.mmg 파일을 찾음.
-        pass
-=======
     @staticmethod
     def str_builder(id = '', movie_balls = 10, score = 0):
         return "slot{id}_{ball}_{score}.mmg".format(id = id, ball = movie_balls, score = score)
-        
+
     @staticmethod
     def save(id = ''):
         try:
             cache = GameData.__load_cache()
-            for p in glob.glob('slot'+id+'_[0-9]+_[0-9]+.mmg'):
+            for p in glob.glob('slot'+id+'_*_*.mmg'):
                 print(p)
                 os.remove(p)
             with open(GameData.str_builder(id, cache['ball_count'], len(cache['captured'])), 'wb') as file:
@@ -27,7 +22,6 @@ class GameData:
         except Exception as e:
             print(e)
             return False
->>>>>>> d50ae53f6e9550af56fb73ec212755d1b7a4cc0d
 
     @staticmethod
     def __load_cache():
@@ -35,26 +29,11 @@ class GameData:
         with open('cache.pkl', 'rb') as cache:
             _cache = pickle.load(cache)
         return _cache
-    
-    @staticmethod
-<<<<<<< HEAD
-    def str_builder(id = '', movie_balls = 10, score = 0):
-        return "slot{id}_{ball}_{score}.mmg".format(id = id, ball = movie_balls, score = score)
 
     @staticmethod
-    # def save(id = ''):
-    #     try:
-    #         cache = GameData.__dump_cache()
-    #         file = open(GameData.str_builder(id, cache['strength'], len(cache['captured']), 'w'))
-    #         file.write(cache)
-    #         file.close()
-    #         return True
-    #     except:
-    #         return False
-=======
     def load(id = ''):
         try:
-            file_name = glob.glob('slot'+id+'_[0-9]+_[0-9]+.mmg')
+            file_name = glob.glob('slot'+id+'_*_*.mmg')
             print(file_name)
             if len(file_name) > 1 or len(file_name) == 0:
                 return False
@@ -64,14 +43,13 @@ class GameData:
         except Exception as e:
             print(e)
             return False
->>>>>>> d50ae53f6e9550af56fb73ec212755d1b7a4cc0d
 
     @staticmethod
     def __dump_cache(_cache):
         _cache = {}
         with open('cache.pkl', 'wb') as cache:
             pickle.dump(_cache, cache)
-    
+
 # #     # @staticmethod
 # #     # def get_file_list(args):
 

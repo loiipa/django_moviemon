@@ -1,10 +1,11 @@
 from django.shortcuts import render
 import Game
+import Game_data
 import random
 
 def titlescreen(request):
 	return render(request, "titlescreen.html",
-	{'commands':{'btn_a':'worldmap/?key=new_game', 'btn_b':'options/load_game/?indicator=a', 'btn_start':'#', 'btn_select':'#',
+	{'commands':{'btn_a':'worldmap/?key=new_game', 'btn_b':'options/load_game/', 'btn_start':'#', 'btn_select':'#',
 		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
 		}})
 
@@ -16,7 +17,7 @@ def location(pos):
 		return "/worldmap?x={}&y={}".format(pos[0], pos[1])
 
 def worldmap(request):
-	key = request.GET.get('key', None)
+	key = request.GET.get('key', '')
 	x = int(request.GET.get('x', -1))
 	y = int(request.GET.get('y', -1))
 	ball_got = False
@@ -126,25 +127,29 @@ def detail(request):
 
 def option(request):
 	return render(request, "option.html",
-	{'commands':{'btn_a':'save_game/?indicator=a', 'btn_b':'../', 'btn_start':'../worldmap', 'btn_select':'#',
+	{'commands':{'btn_a':'save_game/', 'btn_b':'../', 'btn_start':'../worldmap', 'btn_select':'#',
 		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
 		}})
 
 def save(request):
 	indicator = request.GET.get('indicator', None)
 	key = request.GET.get('key', None)
+	save_slot = bool(request.GET.get('save_slot', False))
 
 	if indicator == None:
-		indicator = 'a'
-	elif indicator == 'b' and key == 'Up' or indicator == 'c' and key == 'Down':
-		indicator = 'a'
-	elif indicator == 'c' and key == 'Up' or indicator == 'a' and key == 'Down':
-		indicator = 'b'
-	elif indicator == 'a' and key == 'Up' or indicator == 'b' and key == 'Down':
-		indicator = 'c'
+		indicator = 'A'
+	elif indicator == 'B' and key == 'Up' or indicator == 'C' and key == 'Down':
+		indicator = 'A'
+	elif indicator == 'C' and key == 'Up' or indicator == 'A' and key == 'Down':
+		indicator = 'B'
+	elif indicator == 'A' and key == 'Up' or indicator == 'B' and key == 'Down':
+		indicator = 'C'
+
+	if save_slot == True:
+		Game_data.GameData.save(indicator)
 
 	return render(request, "save.html",
-	{'commands':{'btn_a':'./?indicator=' + indicator, 'btn_b':'../', 'btn_start':'#', 'btn_select':'#',
+	{'commands':{'btn_a':'./?save_slot=True&indicator=' + indicator, 'btn_b':'../', 'btn_start':'#', 'btn_select':'#',
 		'btn_up':'./?key=Up&indicator=' + indicator, 'btn_down':'./?key=Down&indicator=' + indicator, 'btn_left':'#', 'btn_right':'#'
 		},'indicator':indicator
 		})
@@ -152,23 +157,26 @@ def save(request):
 def load(request):
 	indicator = request.GET.get('indicator', None)
 	key = request.GET.get('key', None)
-	load_slot = request.GET.get('load_slot', None)
+	load_slot = bool(request.GET.get('load_slot', False))
 
-	if load_slot == None:
-		load_slot = 'False'
 	if indicator == None:
-		indicator = 'a'
-	elif indicator == 'b' and key == 'Up' or indicator == 'c' and key == 'Down':
-		indicator = 'a'
-	elif indicator == 'c' and key == 'Up' or indicator == 'a' and key == 'Down':
-		indicator = 'b'
-	elif indicator == 'a' and key == 'Up' or indicator == 'b' and key == 'Down':
-		indicator = 'c'
+		indicator = 'A'
+	elif indicator == 'B' and key == 'Up' or indicator == 'C' and key == 'Down':
+		indicator = 'A'
+	elif indicator == 'C' and key == 'Up' or indicator == 'A' and key == 'Down':
+		indicator = 'B'
+	elif indicator == 'A' and key == 'Up' or indicator == 'B' and key == 'Down':
+		indicator = 'C'
+
+	btn_a = './?load_slot=True&indicator=' + indicator
+	if load_slot == True:
+		if Game_data.GameData.load(indicator) == True:
+			btn_a = '/worldmap/?key=load_game'
+
 
 	return render(request, "load.html",
-	{'commands':{'btn_a':'./?load_slot=True&indicator=' + indicator, 'btn_b':'/', 'btn_start':'#', 'btn_select':'#',
-		'btn_up':'./?key=Up&indicator=' + indicator + '&load_slot=' + load_slot,
-		'btn_down':'./?key=Down&indicator=' + indicator + '&load_slot=' + load_slot,
+	{'commands':{'btn_a':btn_a, 'btn_b':'/', 'btn_start':'#', 'btn_select':'#',
+		'btn_up':'./?key=Up&indicator=' + indicator, 'btn_down':'./?key=Down&indicator=' + indicator,
 		'btn_left':'#', 'btn_right':'#'
 		},'indicator':indicator, 'load_slot':load_slot
 		})
