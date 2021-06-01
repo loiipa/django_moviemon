@@ -23,7 +23,6 @@ def worldmap(request):
 			my_info.move_player(key)
 
 	my_info.dump_cache(my_info.dump_data())
-	print(my_info.dump_data())
 
 	return render(request, "worldmap.html",
 	{'commands':{'btn_a':'../battle/', 'btn_b':'#', 'btn_start':'../options/', 'btn_select':'../moviedex/',
