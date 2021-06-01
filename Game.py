@@ -169,11 +169,13 @@ class Game:
     def move_player(self, order):
         return (self._player_move[order](self))
 
-    def player_Attack(self, moviemon):
+    def player_Attack(self, m_id = None):
         if self.movie_balls <= 0:
             return None
         self.movie_balls -= 1
-        if self.player.attack(moviemon) == True:
+        if self.player.attack(self.movie.moviedex[m_id]['imdbRating']) == True:
+            self.movie.captured.append(m_id)
+            self.player.add_power()
             #잡았을 때 분기
             return True
         else:
