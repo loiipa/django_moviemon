@@ -11,7 +11,7 @@ class GameData:
         
     @staticmethod
     def save(id = ''):
-        # try:
+        try:
             if not os.path.exists('saved_game'):
                 os.makedirs('saved_game')
             with open('cache.pkl', 'rb') as _cache:
@@ -24,13 +24,13 @@ class GameData:
                     pickle.dump(cache, file)
                     return True
             return False
-        # except Exception as e:
-        #     print(e)
-        #     return False
+        except Exception as e:
+            print(e)
+            return False
 
     @staticmethod
     def load(id = ''):
-        # try:
+        try:
             if not os.path.exists('saved_game'):
                 return False
             file_name = glob.glob('saved_game/slot'+id+'_*_*.mmg')
@@ -39,18 +39,11 @@ class GameData:
             with open(file_name[0], 'rb') as file:
                 data = pickle.load(file)
             with open('cache.pkl', 'wb') as cache:
-                pickle.dump(cache, data)
+                pickle.dump(data, cache)
             return True
-        # except Exception as e:
-        #     print(e)
-        #     return False
+        except Exception as e:
+            print(e)
+            return False
     
 #     # @staticmethod
 #     # def get_file_list(args):
-
-def main():
-    print(GameData.save('A'))
-    print(GameData.load('A'))
-
-if __name__ == "__main__":
-    main()
