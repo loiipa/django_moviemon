@@ -2,52 +2,61 @@ from django.shortcuts import render
 import Game
 import random
 
-# Create your views here.
-
-g_pos = [0,0]
-g_ball = 10
-
 def titlescreen(request):
 	return render(request, "titlescreen.html",
 	{'commands':{'btn_a':'worldmap/?key=new_game', 'btn_b':'options/load_game/?indicator=a', 'btn_start':'#', 'btn_select':'#',
 		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
 		}})
 
+
+def location(pos):
+	if pos is None:
+		return '#'
+	else:
+		return "/worldmap?x={}&y={}".format(pos[0], pos[1])
+
 def worldmap(request):
 	key = request.GET.get('key', None)
-	global g_pos
-	global g_ball
+	x = int(request.GET.get('x', -1))
+	y = int(request.GET.get('y', -1))
 	ball_got = False
 	movie_got = False
-	pos_tmp = g_pos
 	btn_a = '#'
 	moviemon_id = ''
-
 	my_info = Game.Game()
-	my_info.player.pos_x = g_pos[0]
-	my_info.player.pos_y = g_pos[1]
-	my_info.ball = g_ball
 
 	if key == 'new_game':
-		pass
-	elif key == 'Up' or key == 'Down' or key == 'Left' or key == 'Right':
-		g_pos = my_info.move_player(key)
-	if g_pos != pos_tmp:
-		event = random.randint(0, 5)
-		if event == 0:
-			my_info.ball += 1
-			g_ball = my_info.ball
-			ball_got = True
-		elif event == 1:
-			btn_a = '../battle/' + moviemon_id
-			movie_got = True
+		my_info.movie.load_default_settings()
+		x = my_info.player.x_position()
+		y = my_info.player.y_position()
+	else:
+		my_info.load_data(my_info.load_cache())
+		if x == -1 and y == -1:
+			x = my_info.player.x_position()
+			y = my_info.player.y_position()
+		if x != my_info.player.x_position() or y != my_info.player.y_position():
+			event = random.randint(0, 5)
+			if event == 0:
+				my_info.movie_balls += 1
+				ball_got = True
+			elif event == 1:
+				""" Moviemon 임의로 표기 """
+				moviemon_id = 'tt0468492'
+				btn_a = '../battle/' + moviemon_id
+				movie_got = True
+		my_info.player.pos_x = x
+		my_info.player.pos_y = y
+	my_info.dump_cache(my_info.dump_data())
+	# print(my_info.dump_data())
 
 	return render(request, "worldmap.html",
 	{'commands':{'btn_a':btn_a, 'btn_b':'#', 'btn_start':'../options/', 'btn_select':'../moviedex/',
-		'btn_up':'./?key=Up', 'btn_down':'./?key=Down', 'btn_left':'./?key=Left', 'btn_right':'./?key=Right'
-		}, 'my_location_x':g_pos[0], 'my_location_y':g_pos[1],
+		'btn_up':location(my_info.move_player('Up')), 'btn_down':location(my_info.move_player('Down')),
+		'btn_left':location(my_info.move_player('Left')), 'btn_right':location(my_info.move_player('Right'))
+		},
+		'my_location_x':my_info.player.x_position(), 'my_location_y':my_info.player.y_position(),
 		'map_size_x':range(0, my_info.world.grid_x), 'map_size_y':range(0, my_info.world.grid_y),
-		'ball_count':g_ball, 'ball_got':ball_got, 'movie_got':movie_got
+		'ball_count':my_info.movie_balls, 'ball_got':ball_got, 'movie_got':movie_got
 		})
 
 def battle(request, moviemon_id):
