@@ -58,13 +58,23 @@ def worldmap(request):
 	my_info.dump_cache(my_info.dump_data())
 
 	return render(request, "worldmap.html",
-	{'commands':{'btn_a':btn_a, 'btn_b':'#', 'btn_start':'../options/', 'btn_select':'../moviedex/',
-		'btn_up':location(my_info.move_player('Up')), 'btn_down':location(my_info.move_player('Down')),
-		'btn_left':location(my_info.move_player('Left')), 'btn_right':location(my_info.move_player('Right'))
+	{'commands':{
+		'btn_a':btn_a, 
+		'btn_b':'#', 
+		'btn_start':'../options/', 
+		'btn_select':'../moviedex/',
+		'btn_up':location(my_info.move_player('Up')), 
+		'btn_down':location(my_info.move_player('Down')),
+		'btn_left':location(my_info.move_player('Left')), 
+		'btn_right':location(my_info.move_player('Right'))
 		},
-		'my_location_x':my_info.player.x_position(), 'my_location_y':my_info.player.y_position(),
-		'map_size_x':range(0, my_info.world.grid_x), 'map_size_y':range(0, my_info.world.grid_y),
-		'ball_count':my_info.movie_balls, 'ball_got':ball_got, 'movie_got':movie_got
+		'my_location_x':my_info.player.x_position(), 
+		'my_location_y':my_info.player.y_position(),
+		'map_size_x':range(0, my_info.world.grid_x), 
+		'map_size_y':range(0, my_info.world.grid_y),
+		'ball_count':my_info.movie_balls, 
+		'ball_got':ball_got, 
+		'movie_got':movie_got
 		})
 
 def battle(request, moviemon_id):
@@ -102,12 +112,23 @@ def battle(request, moviemon_id):
 	my_info.dump_cache(my_info.dump_data())
 
 	return render(request, "battle.html",
-	{'commands':{'btn_a':btn_a, 'btn_b':'../worldmap', 'btn_start':'#', 'btn_select':'#',
-		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
-		},'mention_A':mention_A, 'mention_C':mention_C, 'balls' : my_info.movie_balls,
-		'player_strength':my_info.get_strength(), 'movie_strength':int(float(movie_info['imdbRating']) * 10),
+	{'commands':{'btn_a':btn_a, 
+	'btn_b':'../worldmap', 
+	'btn_start':'#', 
+	'btn_select':'#',
+		'btn_up':'#', 
+		'btn_down':'#', 
+		'btn_left':'#', 
+		'btn_right':'#'
+		},'mention_A':mention_A, 
+		'mention_C':mention_C, 
+		'balls' : my_info.movie_balls,
+		'player_strength':my_info.get_strength(), 
+		'movie_strength':int(float(movie_info['imdbRating']) * 10),
 		'rate':my_info.player.percentage(float(movie_info['imdbRating'])),
-		'image':movie_info['Poster'], 'title':movie_info['Title'], 'imdbRating':movie_info['imdbRating'],
+		'image':movie_info['Poster'], 
+		'title':movie_info['Title'], 
+		'imdbRating':movie_info['imdbRating'],
 		})
 
 def moviedex(request):
@@ -151,9 +172,17 @@ def moviedex(request):
 		moviemon_id = my_info.movie.captured[key]
 
 	return render(request, "moviedex.html",
-	{'commands':{'btn_a':'detail/' + moviemon_id + '?key=' + str(key), 'btn_b':'#', 'btn_start':'#', 'btn_select':'../worldmap/',
-		'btn_up':'#', 'btn_down':'#', 'btn_left':'./?key=' + str(key - 1), 'btn_right':'./?key=' + str(key + 1)
-		},'post_list':post_list, 'title_list':title_list, 'movie_count':movie_count
+	{'commands':{'btn_a':'detail/' + moviemon_id + '?key=' + str(key), 
+	'btn_b':'#', 
+	'btn_start':'#', 
+	'btn_select':'../worldmap/',
+		'btn_up':'#', 
+		'btn_down':'#', 
+		'btn_left':'./?key=' + str(key - 1), 
+		'btn_right':'./?key=' + str(key + 1)
+		},'post_list':post_list, 
+		'title_list':title_list, 
+		'movie_count':movie_count
 		})
 
 def detail(request, moviemon_id):
@@ -162,14 +191,32 @@ def detail(request, moviemon_id):
 	movie_info = my_info.get_movie(moviemon_id)
 
 	return render(request, "detail.html",
-	{'commands':{'btn_a':'#', 'btn_b':'../?key='+ str(key), 'btn_start':'#', 'btn_select':'#', 'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
-		},'image':movie_info['Poster'], 'title':movie_info['Title'], 'year':movie_info['Year'], 'genre':movie_info['Genre'],'imdbRating':float(movie_info['imdbRating']),'plot':movie_info['Plot']
+	{'commands':{'btn_a':'#', 
+	'btn_b':'../?key='+ str(key), 
+	'btn_start':'#', 
+	'btn_select':'#', 
+	'btn_up':'#', 
+	'btn_down':'#', 
+	'btn_left':'#', 
+	'btn_right':'#'
+		},'image':movie_info['Poster'], 
+		'title':movie_info['Title'], 
+		'year':movie_info['Year'], 
+		'genre':movie_info['Genre'],
+		'imdbRating':float(movie_info['imdbRating']),
+		'plot':movie_info['Plot']
 		})
 
 def option(request):
 	return render(request, "option.html",
-	{'commands':{'btn_a':'save_game/', 'btn_b':'../', 'btn_start':'../worldmap', 'btn_select':'#',
-		'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
+	{'commands':{'btn_a':'save_game/', 
+	'btn_b':'../', 
+	'btn_start':'../worldmap', 
+	'btn_select':'#',
+		'btn_up':'#', 
+		'btn_down':'#', 
+		'btn_left':'#', 
+		'btn_right':'#'
 		}})
 
 def save(request):
@@ -192,9 +239,16 @@ def save(request):
 	sav_lst = Game_data.GameData.get_save_list()
 
 	return render(request, "save.html",
-	{'commands':{'btn_a':'./?save_slot=True&indicator=' + indicator, 'btn_b':'../', 'btn_start':'#', 'btn_select':'#',
-		'btn_up':'./?key=Up&indicator=' + indicator, 'btn_down':'./?key=Down&indicator=' + indicator, 'btn_left':'#', 'btn_right':'#'
-		},'indicator':indicator, 'sav_lst':sav_lst
+	{'commands':{'btn_a':'./?save_slot=True&indicator=' + indicator, 
+	'btn_b':'../', 
+	'btn_start':'#', 
+	'btn_select':'#',
+		'btn_up':'./?key=Up&indicator=' + indicator,
+		'btn_down':'./?key=Down&indicator=' + indicator, 
+		'btn_left':'#', 
+		'btn_right':'#'
+		},'indicator':indicator, 
+		'sav_lst':sav_lst
 		})
 
 def load(request):
@@ -225,9 +279,15 @@ def load(request):
 
 
 	return render(request, "load.html",
-	{'commands':{'btn_a':btn_a, 'btn_b':'/', 'btn_start':'#', 'btn_select':'#',
-		'btn_up':'./?key=Up&indicator=' + indicator, 'btn_down':'./?key=Down&indicator=' + indicator,
-		'btn_left':'#', 'btn_right':'#'
-		},'indicator':indicator, 'load_slot':load_slot, 'sav_lst':sav_lst
+	{'commands':{'btn_a':btn_a, 'btn_b':'/', 
+	'btn_start':'#', 
+	'btn_select':'#',
+		'btn_up':'./?key=Up&indicator=' + indicator, 
+		'btn_down':'./?key=Down&indicator=' + indicator,
+		'btn_left':'#', 
+		'btn_right':'#'
+		},'indicator':indicator, 
+		'load_slot':load_slot, 
+		'sav_lst':sav_lst
 		})
 

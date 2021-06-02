@@ -19,22 +19,13 @@ class GameObject:
     def position(self):
         return self.pos_x, self.pos_y
 
-    def set_power(self, power = 0):
-        self.power = power
-
-    def add_power(self, inc = 1):
-        self.power += inc
-
-    def strength(self):
-        return self.power
-
 
 
 class Player(GameObject):
 
     def __init__(self, x = 0, y = 0):
         super().__init__(x, y)
-        self.set_power()
+        self.power = 0
 
     def load_default_settings(self):
         self.pos_x = settings.START_POINT[0]
@@ -45,7 +36,10 @@ class Player(GameObject):
             raise Player.PlayerClassError("loading Error in Class:Player < Game.py : no cache file")
         self.pos_x = cache['player_pos'][0]
         self.pos_y = cache['player_pos'][1]
-        self.set_power(cache['strength'])
+        self.power = cache['strength']
+
+    def strength(self):
+        return self.power
 
     def move(self, x_inc, y_inc):
         dest_pos_x = self.pos_x + x_inc
@@ -71,18 +65,6 @@ class Player(GameObject):
     class PlayerClassError(Exception):
         def __init__(self, str = 'Error in Class:Player < Game.py'):
             super().__init__(str)
-
-
-
-class Movimon(GameObject):
-    #무비몬 정보
-    def __init__(self, id = "", power = 0):
-        super().__init__()
-        self.id = id
-        self.set_power(power)
-
-    # def movie_id(self):
-    #     return self._info['id']
 
 
 
@@ -126,6 +108,7 @@ class Movie:
         dup = self.captured
         dup.append(add)
         if len(dup) == len(set(dup)):
+            dup.remove(add)
             return True
         dup.remove(add)
         return False
@@ -166,6 +149,7 @@ class Game:
         self.movie = Movie()
         self.movie_balls = 0
         self.battle = False
+        self.battle_result = None
 
     #////////////////
     #//data control//
@@ -184,7 +168,7 @@ class Game:
             'strength' : self.player.strength(),
             'captured' : self.movie.captured,
             'moviedex' : self.movie.moviedex,
-            'battle' : self.battle
+            'battle' : self.battle,
         }
 
     def load_data(self, cache):
@@ -206,7 +190,7 @@ class Game:
     def get_strength(self):
         return self.player.strength()
 
-    def get_random_movie(self, id = ''):
+    def get_random_movie(self):
         return self.movie.get_random_movie()
     
     @staticmethod
@@ -251,6 +235,7 @@ class Game:
         self.battle = True
 
     def battle_end(self):
+        self.battle_result = None
         self.battle = False
 
     def battle_status(self):
@@ -261,8 +246,8 @@ class Game:
             return None
         self.movie_balls -= 1
         if self.player.attack(float(self.movie.moviedex[m_id]['imdbRating'])) == True:
-            self.movie.captured.append(m_id)
-            self.player.add_power()
+            self.movie.capture(m_id)
+            self.player.power = len(self.movie.captured)
             #잡았을 때 분기
             return True
         else:
@@ -293,11 +278,3 @@ class Game:
     class GameClassError(Exception):
         def __init__(self, str = 'Error in Class:Game < Game.py'):
             super().__init__(str)
-
-# def main():
-#     game = Game()
-#     game.movie.load_default_settings()
-#     print(game.movie.moviedex.items())
-
-# if __name__ == "__main__":
-#     main()
