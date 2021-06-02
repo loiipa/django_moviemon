@@ -47,7 +47,7 @@ class GameData:
     @staticmethod
     def __make_slot_name(slot_file_name = ''):
         name_list = slot_file_name.replace('saved_game/', '').split('_')
-        name = name_list[0] + ' : ' + name_list[1]+'/'+name_list[2].replace('.mmg', '')
+        name = name_list[1]+'/'+name_list[2].replace('.mmg', '')
         return name
         
 

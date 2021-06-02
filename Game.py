@@ -143,6 +143,7 @@ class Game:
         self.world = World()
         self.movie = Movie()
         self.movie_balls = ball_count
+        self.battle = False
 
     #////////////////
     #//data control//
@@ -154,7 +155,8 @@ class Game:
             'ball_count' : self.movie_balls,
             'strength' : self.player.strength(),
             'captured' : self.movie.captured,
-            'moviedex' : self.movie.moviedex
+            'moviedex' : self.movie.moviedex,
+            'battle' : self.battle
         }
 
     def load_data(self, cache):
@@ -165,6 +167,7 @@ class Game:
             self.world.load_data(cache)
             self.movie.load_data(cache)
             self.movie_balls = cache['ball_count']
+            self.battle = cache['battle']
         except Exception as e:
             print(e)
 
@@ -201,6 +204,18 @@ class Game:
     def get_strength(self):
         return self.player.strength()
 
+    #////////////////
+    #/////battle/////
+    #////////////////
+
+    def battle_start(self):
+        self.battle = True
+
+    def battle_end(self):
+        self.battle = False
+
+    def battle_status(self):
+        return self.battle
 
     def player_Attack(self, m_id = None):
         if self.movie_balls <= 0:
