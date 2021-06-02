@@ -6,8 +6,7 @@ import glob
 class GameData:
 
     @staticmethod
-    #def str_builder(id = '', movie_balls = settings.BALL_COUNT, score = 0):
-    def str_builder(id = '', movie_balls = 12, score = 0):
+    def str_builder(id = '', movie_balls = settings.BALL_COUNT, score = 0):
         return "saved_game/slot{id}_{ball}_{score}.mmg".format(id = id, ball = movie_balls, score = score)
         
     @staticmethod
