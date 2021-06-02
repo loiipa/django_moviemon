@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import Game
 import Game_data
 import random
+from django.http import Http404
+from django.conf import settings
 
 def titlescreen(request):
 	return render(request, "titlescreen.html",
@@ -78,6 +80,9 @@ def worldmap(request):
 		})
 
 def battle(request, moviemon_id):
+	if not moviemon_id in settings.MOVIES or moviemon_id == None:
+		raise Http404("Moviemon_id Error")
+
 	my_info = Game.Game()
 	my_info.load_data(my_info.load_cache())
 
@@ -100,9 +105,12 @@ def battle(request, moviemon_id):
 			mention_C = 'Your Ball is empty.'
 			btn_a = './' + moviemon_id + '?result=' + str(result)
 		elif result == True:
-			mention_A = ''
-			mention_C = 'Gotcha!'
-			btn_a = './' + moviemon_id + '?result=gotcha'
+			# mention_A = ''
+			# mention_C = 'Gotcha!'
+			# btn_a = './' + moviemon_id + '?result=gotcha'
+			my_info.battle_end()
+			my_info.dump_cache(my_info.dump_data())
+			return redirect('./' + moviemon_id + '?result=gotcha')
 		elif result == False:
 			mention_A = 'A - Launch Movieball'
 			mention_C = 'Unfortunately missed!'
@@ -139,12 +147,16 @@ def moviedex(request):
 	title_list = []
 	show_list = []
 	moviemon_id = ''
+	btn_a = 'detail/'
 
 	print(my_info.cache['moviedex'])
 
 	movie_count = len(my_info.movie.captured)
 
-	if movie_count == 1:
+	if movie_count == 0:
+		key = 0
+		btn_a = '#'
+	elif movie_count == 1:
 		show_list = [0]
 		key = 0
 	elif movie_count == 2:
@@ -172,39 +184,24 @@ def moviedex(request):
 		moviemon_id = my_info.movie.captured[key]
 
 	return render(request, "moviedex.html",
-	{'commands':{'btn_a':'detail/' + moviemon_id + '?key=' + str(key), 
-	'btn_b':'#', 
-	'btn_start':'#', 
-	'btn_select':'../worldmap/',
-		'btn_up':'#', 
-		'btn_down':'#', 
-		'btn_left':'./?key=' + str(key - 1), 
-		'btn_right':'./?key=' + str(key + 1)
-		},'post_list':post_list, 
-		'title_list':title_list, 
-		'movie_count':movie_count
+	{'commands':{'btn_a':btn_a + moviemon_id + '?key=' + str(key), 'btn_b':'#', 'btn_start':'#', 'btn_select':'../worldmap/',
+		'btn_up':'#', 'btn_down':'#', 'btn_left':'./?key=' + str(key - 1), 'btn_right':'./?key=' + str(key + 1)
+		},'post_list':post_list, 'title_list':title_list, 'movie_count':movie_count
 		})
 
 def detail(request, moviemon_id):
+	if not moviemon_id in settings.MOVIES or moviemon_id == None:
+		raise Http404("Moviemon_id Error")
+
 	key = int(request.GET.get('key', 0))
 	my_info = Game.Game()
 	movie_info = my_info.get_movie(moviemon_id)
 
 	return render(request, "detail.html",
-	{'commands':{'btn_a':'#', 
-	'btn_b':'../?key='+ str(key), 
-	'btn_start':'#', 
-	'btn_select':'#', 
-	'btn_up':'#', 
-	'btn_down':'#', 
-	'btn_left':'#', 
-	'btn_right':'#'
-		},'image':movie_info['Poster'], 
-		'title':movie_info['Title'], 
-		'year':movie_info['Year'], 
-		'genre':movie_info['Genre'],
-		'imdbRating':float(movie_info['imdbRating']),
-		'plot':movie_info['Plot']
+	{'commands':{'btn_a':'#', 'btn_b':'../?key='+ str(key), 'btn_start':'#', 'btn_select':'#', 'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
+		},'image':movie_info['Poster'], 'title':movie_info['Title'], 'year':movie_info['Year'],
+		'genre':movie_info['Genre'],'imdbRating':float(movie_info['imdbRating']),'plot':movie_info['Plot'],
+		'director':movie_info['Director'], 'actors':movie_info['Actors']
 		})
 
 def option(request):
@@ -291,3 +288,5 @@ def load(request):
 		'sav_lst':sav_lst
 		})
 
+def error404(request, exception):
+	return render(request, "404.html", {'exception':exception})
