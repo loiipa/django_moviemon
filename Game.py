@@ -35,6 +35,8 @@ class Player(GameObject):
         self.set_power()
 
     def load_data(self, cache):
+        if cache == None:
+            raise Player.PlayerClassError("loading Error in Class:Player < Game.py : no cache file")
         self.pos_x = cache['player_pos'][0]
         self.pos_y = cache['player_pos'][1]
         self.set_power(cache['strength'])
@@ -58,6 +60,11 @@ class Player(GameObject):
         if r_num < atk:
             return True
         return False
+
+    @staticmethod
+    class PlayerClassError(Exception):
+        def __init__(self, str = 'Error in Class:Player < Game.py'):
+            super().__init__(str)
 
 class Movimon(GameObject):
     #영화 정보
@@ -84,6 +91,8 @@ class Movie:
         self.captured = []
 
     def load_data(self, cache):
+        if cache == None:
+            raise Movie.MovieClassError("loading Error in Class:Movie < Game.py : no cache file")
         self.captured = cache['captured']
         self.moviedex = cache['moviedex']
 
@@ -106,15 +115,26 @@ class Movie:
         params = { 'i':id, 'r':'json', 'apikey':"c94fad6" }
         URL = 'http://www.omdbapi.com/'
         response = requests.get(URL, params = params)
+        if response.ok == False:
+            raise Movie.MovieClassError("request Error in Class:Movie < Game.py")
         my_json = response.json()
         return my_json
 
     def load_default_settings(self, lst = settings.MOVIES):
-        dic = {}
-        for movie in lst:
-            this_json = Movie.get_movie(movie)
-            dic[movie] = this_json
-        self.moviedex = dic
+        try:
+            dic = {}
+            for movie in lst:
+                this_json = Movie.get_movie(movie)
+                dic[movie] = this_json
+            self.moviedex = dic
+        except Movie.MovieClassError as e:
+            print(e)
+    
+    @staticmethod
+    class MovieClassError(Exception):
+        def __init__(self, str = 'Error in Class:Movie < Game.py'):
+            super().__init__(str)
+            
 
 class Game:
 
@@ -138,10 +158,15 @@ class Game:
         }
 
     def load_data(self, cache):
-        self.player.load_data(cache)
-        self.world.load_data(cache)
-        self.movie.load_data(cache)
-        self.movie_balls = cache['ball_count']
+        try:
+            if cache == None:
+                raise Game.GameClassError("loading Error in Class:Game < Game.py : no cache file")
+            self.player.load_data(cache)
+            self.world.load_data(cache)
+            self.movie.load_data(cache)
+            self.movie_balls = cache['ball_count']
+        except Exception as e:
+            print(e)
 
     #////////////////
     #/Player control/
@@ -195,15 +220,26 @@ class Game:
     #////////////////
 
     def dump_cache(self, _cache):
-        with open('cache.pkl', 'wb') as cache:
-            pickle.dump(_cache, cache)
+        try:
+            with open('cache.pkl', 'wb') as cache:
+                pickle.dump(_cache, cache)
+        except Game.GameClassError as e:
+            print (e)
 
     def load_cache(self):
-        self.cache = {}
-        with open('cache.pkl', 'rb') as cache:
-            self.cache = pickle.load(cache)
-        return self.cache
+        try:
+            self.cache = {}
+            with open('cache.pkl', 'rb') as cache:
+                self.cache = pickle.load(cache)
+            return self.cache
+        except Game.GameClassError as e:
+            print(e)
 
+    @staticmethod
+    class GameClassError(Exception):
+        def __init__(self, str = 'Error in Class:Game < Game.py'):
+            super().__init__(str)
+            
 # def main():
 #     game = Game()
 #     game.movie.load_default_settings()

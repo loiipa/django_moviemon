@@ -6,8 +6,7 @@ import glob
 class GameData:
 
     @staticmethod
-    #def str_builder(id = '', movie_balls = settings.BALL_COUNT, score = 0):
-    def str_builder(id = '', movie_balls = 12, score = 0):
+    def str_builder(id = '', movie_balls = settings.BALL_COUNT, score = 0):
         return "saved_game/slot{id}_{ball}_{score}.mmg".format(id = id, ball = movie_balls, score = score)
         
     @staticmethod
@@ -17,7 +16,6 @@ class GameData:
                 os.makedirs('saved_game')
             with open('cache.pkl', 'rb') as _cache:
                 cache = pickle.load(_cache)
-            print(cache)
             for p in glob.glob('saved_game/slot'+id+'_*_*.mmg'):
                 os.remove(p)
             if len(cache) > 0:
@@ -25,7 +23,7 @@ class GameData:
                     pickle.dump(cache, file)
                     return True
             return False
-        except Exception as e:
+        except GameData.GameDataError as e:
             print(e)
             return False
 
@@ -42,7 +40,7 @@ class GameData:
             with open('cache.pkl', 'wb') as cache:
                 pickle.dump(data, cache)
             return True
-        except Exception as e:
+        except GameData.GameDataError as e:
             print(e)
             return False
    
@@ -66,3 +64,9 @@ class GameData:
         if len(c_file) == 1:
             sav_lst[2] = GameData.__make_slot_name(c_file[0])
         return sav_lst
+
+    @staticmethod
+    class GameDataError(Exception):
+        def __init__(self, str = 'GameDataError : Game_data.py'):
+            super().__init__(str)
+            
