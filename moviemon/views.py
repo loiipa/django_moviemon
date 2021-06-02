@@ -36,11 +36,11 @@ def worldmap(request):
 			x = my_info.player.x_position()
 			y = my_info.player.y_position()
 		if x != my_info.player.x_position() or y != my_info.player.y_position():
-			event = random.randint(0, 2)
-			if event == 0:
+			event = random.randint(0, 5)
+			if event == 0 or event == 1:
 				my_info.movie_balls += 1
 				ball_got = True
-			elif event == 1 and len(my_info.movie.moviedex) > len(my_info.movie.captured):
+			elif event == 2 and len(my_info.movie.moviedex) > len(my_info.movie.captured):
 				moviemon_id = my_info.movie.get_random_movie()
 				btn_a = '../battle/' + moviemon_id[0]
 				movie_got = True
@@ -99,8 +99,10 @@ def moviedex(request):
 	post_list = []
 	title_list = []
 	show_list = []
+	moviemon_id = ''
 
 	movie_count = len(my_info.movie.captured)
+
 	if movie_count == 1:
 		show_list = [0]
 		key = 0
@@ -125,7 +127,8 @@ def moviedex(request):
 		id = my_info.movie.captured[i]
 		post_list.append(my_info.movie.moviedex[id]['Poster'])
 		title_list.append(my_info.movie.moviedex[id]['Title'])
-	moviemon_id = my_info.movie.captured[key]
+	if movie_count > 0:
+		moviemon_id = my_info.movie.captured[key]
 
 	return render(request, "moviedex.html",
 	{'commands':{'btn_a':'detail/' + moviemon_id + '?key=' + str(key), 'btn_b':'#', 'btn_start':'#', 'btn_select':'../worldmap/',
@@ -166,10 +169,12 @@ def save(request):
 	if save_slot == True:
 		Game_data.GameData.save(indicator)
 
+	sav_lst = Game_data.GameData.get_save_list()
+
 	return render(request, "save.html",
 	{'commands':{'btn_a':'./?save_slot=True&indicator=' + indicator, 'btn_b':'../', 'btn_start':'#', 'btn_select':'#',
 		'btn_up':'./?key=Up&indicator=' + indicator, 'btn_down':'./?key=Down&indicator=' + indicator, 'btn_left':'#', 'btn_right':'#'
-		},'indicator':indicator
+		},'indicator':indicator, 'sav_lst':sav_lst
 		})
 
 def load(request):
@@ -191,11 +196,12 @@ def load(request):
 		if Game_data.GameData.load(indicator) == True:
 			btn_a = '/worldmap/?key=load_game'
 
+	sav_lst = Game_data.GameData.get_save_list()
 
 	return render(request, "load.html",
 	{'commands':{'btn_a':btn_a, 'btn_b':'/', 'btn_start':'#', 'btn_select':'#',
 		'btn_up':'./?key=Up&indicator=' + indicator, 'btn_down':'./?key=Down&indicator=' + indicator,
 		'btn_left':'#', 'btn_right':'#'
-		},'indicator':indicator, 'load_slot':load_slot
+		},'indicator':indicator, 'load_slot':load_slot, 'sav_lst':sav_lst
 		})
 
