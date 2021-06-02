@@ -129,12 +129,12 @@ class Movie:
             self.moviedex = dic
         except Movie.MovieClassError as e:
             print(e)
-    
+
     @staticmethod
     class MovieClassError(Exception):
         def __init__(self, str = 'Error in Class:Movie < Game.py'):
             super().__init__(str)
-            
+
 
 class Game:
 
@@ -254,7 +254,7 @@ class Game:
     class GameClassError(Exception):
         def __init__(self, str = 'Error in Class:Game < Game.py'):
             super().__init__(str)
-            
+
 # def main():
 #     game = Game()
 #     game.movie.load_default_settings()
