@@ -128,6 +128,10 @@ API_KEY = "c94fad6"
 
 BALL_COUNT = 12
 
+GRID_SIZE = 10
+
+START_POINT = (5, 5)
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

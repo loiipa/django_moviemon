@@ -28,11 +28,17 @@ class GameObject:
     def strength(self):
         return self.power
 
+
+
 class Player(GameObject):
 
     def __init__(self, x = 0, y = 0):
         super().__init__(x, y)
         self.set_power()
+
+    def load_default_settings(self):
+        self.pos_x = settings.START_POINT[0]
+        self.pos_y = settings.START_POINT[1]
 
     def load_data(self, cache):
         if cache == None:
@@ -66,8 +72,10 @@ class Player(GameObject):
         def __init__(self, str = 'Error in Class:Player < Game.py'):
             super().__init__(str)
 
+
+
 class Movimon(GameObject):
-    #영화 정보
+    #무비몬 정보
     def __init__(self, id = "", power = 0):
         super().__init__()
         self.id = id
@@ -76,19 +84,37 @@ class Movimon(GameObject):
     # def movie_id(self):
     #     return self._info['id']
 
+
+
 class World:
 
-    def __init__(self, size_x = 10, size_y = 10):
+    def __init__(self, size_x = settings.GRID_SIZE, size_y = settings.GRID_SIZE):
         self.grid_x = size_x
         self.grid_y = size_y
 
+    def load_default_settings(self):
+        self.grid_x = settings.GRID_SIZE
+        self.grid_y = settings.GRID_SIZE
+
     def load_data(self, cache):
         None
+
+
 
 class Movie:
 
     def __init__(self):
         self.captured = []
+
+    def load_default_settings(self, lst = settings.MOVIES):
+        try:
+            dic = {}
+            for movie in lst:
+                this_json = Movie.get_movie(movie)
+                dic[movie] = this_json
+            self.moviedex = dic
+        except Movie.MovieClassError as e:
+            print(e)
 
     def load_data(self, cache):
         if cache == None:
@@ -96,18 +122,23 @@ class Movie:
         self.captured = cache['captured']
         self.moviedex = cache['moviedex']
 
+    def __check_captured_dup(self, add):
+        dup = self.captured
+        dup.append(add)
+        if len(dup) == len(set(dup)):
+            return True
+        dup.remove(add)
+        return False
+
     def capture(self, id):
-        self.captured.append(id)
+        if self.__check_captured_dup(id) == True:
+            self.captured.append(id)
 
     def get_random_movie(self):
-        result = True
-        while result:
-            dup = self.captured
+        result = False
+        while result == False:
             id = random.choice(settings.MOVIES)
-            dup.append(id)
-            if len(dup) == len(set(dup)):
-                result = False
-            dup.remove(id)
+            result = self.__check_captured_dup(id)
         return id, self.moviedex[id]
 
     @staticmethod
@@ -120,34 +151,31 @@ class Movie:
         my_json = response.json()
         return my_json
 
-    def load_default_settings(self, lst = settings.MOVIES):
-        try:
-            dic = {}
-            for movie in lst:
-                this_json = Movie.get_movie(movie)
-                dic[movie] = this_json
-            self.moviedex = dic
-        except Movie.MovieClassError as e:
-            print(e)
-
     @staticmethod
     class MovieClassError(Exception):
         def __init__(self, str = 'Error in Class:Movie < Game.py'):
             super().__init__(str)
 
 
+
 class Game:
 
-    def __init__(self, ball_count = 10):
+    def __init__(self):
         self.player = Player()
         self.world = World()
         self.movie = Movie()
-        self.movie_balls = ball_count
+        self.movie_balls = 0
         self.battle = False
 
     #////////////////
     #//data control//
     #////////////////
+
+    def load_default_settings(self):
+        self.player.load_default_settings()
+        self.world.load_default_settings()
+        self.movie.load_default_settings()
+        self.movie_balls = settings.BALL_COUNT
 
     def dump_data(self):
         return {
@@ -168,8 +196,22 @@ class Game:
             self.movie.load_data(cache)
             self.movie_balls = cache['ball_count']
             self.battle = cache['battle']
-        except Exception as e:
+        except Game.GameClassError as e:
             print(e)
+            
+    #////////////////
+    #//////get///////
+    #//////////////// 
+
+    def get_strength(self):
+        return self.player.strength()
+
+    def get_random_movie(self, id = ''):
+        return self.movie.get_random_movie()
+    
+    @staticmethod
+    def get_movie(id = ''):
+        return Movie.get_movie(id)
 
     #////////////////
     #/Player control/
@@ -200,9 +242,6 @@ class Game:
 
     def move_player(self, order):
         return (self._player_move[order](self))
-
-    def get_strength(self):
-        return self.player.strength()
 
     #////////////////
     #/////battle/////

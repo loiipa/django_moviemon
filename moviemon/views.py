@@ -28,13 +28,13 @@ def worldmap(request):
 	my_info = Game.Game()
 
 	if key == 'new_game':
-		my_info.movie.load_default_settings()
-		x = my_info.player.x_position()
-		y = my_info.player.y_position()
+		my_info.load_default_settings()
+		x, y = my_info.player.position()
 	else:
 		my_info.load_data(my_info.load_cache())
 
 		if x == -1 and y == -1:
+			x, y = my_info.player.position()
 			x = my_info.player.x_position()
 			y = my_info.player.y_position()
 
@@ -48,7 +48,7 @@ def worldmap(request):
 			elif event == 2 and len(my_info.movie.moviedex) > len(my_info.movie.captured):
 				my_info.battle_start()
 		if my_info.battle_status() == True:
-			moviemon_id = my_info.movie.get_random_movie()
+			moviemon_id = my_info.get_random_movie()
 			btn_a = '../battle/' + moviemon_id[0]
 			movie_got = True
 
@@ -73,7 +73,7 @@ def battle(request, moviemon_id):
 
 	result = request.GET.get('result', 'first')
 	btn_a = '#'
-	movie_info = my_info.movie.get_movie(moviemon_id)
+	movie_info = my_info.get_movie(moviemon_id)
 
 	if result == 'first':
 		mention_A = 'Press A! You Can catch that!'
@@ -114,6 +114,8 @@ def moviedex(request):
 	show_list = []
 	moviemon_id = ''
 
+	print(my_info.cache['moviedex'])
+
 	movie_count = len(my_info.movie.captured)
 
 	if movie_count == 1:
@@ -152,7 +154,7 @@ def moviedex(request):
 def detail(request, moviemon_id):
 	key = int(request.GET.get('key', 0))
 	my_info = Game.Game()
-	movie_info = my_info.movie.get_movie(moviemon_id)
+	movie_info = my_info.get_movie(moviemon_id)
 
 	return render(request, "detail.html",
 	{'commands':{'btn_a':'#', 'btn_b':'../?key='+ str(key), 'btn_start':'#', 'btn_select':'#', 'btn_up':'#', 'btn_down':'#', 'btn_left':'#', 'btn_right':'#'
