@@ -80,14 +80,19 @@ def battle(request, moviemon_id):
 		mention_C = ''
 		result = None
 		btn_a = './' + moviemon_id + '?result=' + str(result)
+	elif result == 'gotcha':
+		mention_A = ''
+		mention_C = 'Gotcha!'
 	else:
 		result = my_info.player_Attack(moviemon_id)
 		if result == None:
 			mention_A = 'Go Away!'
 			mention_C = 'Your Ball is empty.'
+			btn_a = './' + moviemon_id + '?result=' + str(result)
 		elif result == True:
 			mention_A = ''
 			mention_C = 'Gotcha!'
+			btn_a = './' + moviemon_id + '?result=gotcha'
 		elif result == False:
 			mention_A = 'A - Launch Movieball'
 			mention_C = 'Unfortunately missed!'
@@ -204,12 +209,18 @@ def load(request):
 	elif indicator == 'A' and key == 'Up' or indicator == 'B' and key == 'Down':
 		indicator = 'C'
 
-	btn_a = './?load_slot=True&indicator=' + indicator
+	sav_lst = Game_data.GameData.get_save_list()
+
+	if sav_lst[ord(indicator) - ord('A')] == 'Free':
+		btn_a = './?indicator=' + indicator
+	else:
+		btn_a = './?load_slot=True&indicator=' + indicator
+
 	if load_slot == True:
 		if Game_data.GameData.load(indicator) == True:
 			btn_a = '/worldmap/?key=load_game'
 
-	sav_lst = Game_data.GameData.get_save_list()
+
 
 	return render(request, "load.html",
 	{'commands':{'btn_a':btn_a, 'btn_b':'/', 'btn_start':'#', 'btn_select':'#',
