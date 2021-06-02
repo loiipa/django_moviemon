@@ -1,12 +1,13 @@
 import os
-#from django.conf import settings
+from django.conf import settings
 import pickle
 import glob
 
 class GameData:
 
     @staticmethod
-    def str_builder(id = '', movie_balls = settings.BALL_COUNT, score = 0):
+    #def str_builder(id = '', movie_balls = settings.BALL_COUNT, score = 0):
+    def str_builder(id = '', movie_balls = 12, score = 0):
         return "saved_game/slot{id}_{ball}_{score}.mmg".format(id = id, ball = movie_balls, score = score)
         
     @staticmethod
@@ -20,7 +21,7 @@ class GameData:
             for p in glob.glob('saved_game/slot'+id+'_*_*.mmg'):
                 os.remove(p)
             if len(cache) > 0:
-                with open(GameData.str_builder(id, cache['ball_count'], len(cache['captured'])), 'wb') as file:
+                with open(GameData.str_builder(id, len(cache['captured']), len(cache['moviedex'])), 'wb') as file:
                     pickle.dump(cache, file)
                     return True
             return False
@@ -46,15 +47,22 @@ class GameData:
             return False
    
     @staticmethod
+    def __make_slot_name(slot_file_name = ''):
+        name_list = slot_file_name.replace('saved_game/', '').split('_')
+        name = name_list[0] + ' : ' + name_list[1]+'/'+name_list[2].replace('.mmg', '')
+        return name
+        
+
+    @staticmethod
     def get_save_list():
         sav_lst = ['Free', 'Free', 'Free']
         a_file = glob.glob('saved_game/slotA_*_*.mmg')
         if len(a_file) == 1:
-            sav_lst[0] = a_file[0]
+            sav_lst[0] = GameData.__make_slot_name(a_file[0])
         b_file = glob.glob('saved_game/slotB_*_*.mmg')
         if len(b_file) == 1:
-            sav_lst[0] = b_file[0]
+            sav_lst[1] = GameData.__make_slot_name(b_file[0])
         c_file = glob.glob('saved_game/slotC_*_*.mmg')
         if len(c_file) == 1:
-            sav_lst[0] = c_file[0]
+            sav_lst[2] = GameData.__make_slot_name(c_file[0])
         return sav_lst
