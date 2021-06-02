@@ -6,6 +6,16 @@ Battle
 
 {% block content %}
 <h2>Battle</h2>
-<p>A - Launch Movieball</p>
+<ul>
+  <li>Rest of Balls: {{balls}}</li>
+  <li>Player strength: {{player_strength}}</li>
+  <li>movie strength: {{movie_strength}}</li>
+  <li>Capture Rate: {{rate}}%</li>
+</ul>
+<img src="{{image}}" />
+<p>{{title}}</p>
+<p>{{imdbRating}}</p>
+<p>{{mention_A}}</p>
 <p>B - back to Worldmap</p>
+<p>{{mention_C}}</p>
 {% endblock %}

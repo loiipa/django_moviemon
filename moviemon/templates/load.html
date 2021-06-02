@@ -1,11 +1,31 @@
 {% extends "base.html" %}
-
 {% block title %}
 Load
 {% endblock %}
 
 {% block content %}
 <h2>Load</h2>
+
+<p>
+{% if indicator == 'A' %}
+->
+{% endif %}
+Slot A</p>
+<p>
+{% if indicator == 'B' %}
+->
+{% endif %}
+Slot B</p>
+<p>
+{% if indicator == 'C' %}
+->
+{% endif %}
+Slot C</p>
+
+{% if load_slot == True %}
+<p>A - Start game</p>
+{% else %}
 <p>A - Load</p>
+{% endif %}
 <p>B - Cancel</p>
 {% endblock %}

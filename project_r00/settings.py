@@ -126,6 +126,8 @@ MOVIES = ('tt0468492', 'tt5034838', 'tt0078748', 'tt0087363', 'tt0073195', 'tt82
 
 API_KEY = "c94fad6"
 
+BALL_COUNT = 12
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
